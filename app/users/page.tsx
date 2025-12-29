@@ -482,6 +482,7 @@ export default function UsersPage() {
             currentPage={currentPage}
             totalPages={totalPages || 1}
             pageSize={pageSize}
+            totalItems={sortedUsers.length}
             onPageChange={setCurrentPage}
             onPageSizeChange={(size) => {
               setPageSize(size)

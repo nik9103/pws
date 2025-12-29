@@ -98,7 +98,7 @@ export function SearchCommand({ open, onOpenChange }: SearchCommandProps) {
                   onSelect={() => handleSelect(`/users/${user.id}`)}
                 >
                   <Users className="h-4 w-4" />
-                  <span>
+                  <span className="text-sm font-medium text-foreground">
                     {user.lastName} {user.firstName} {user.middleName}
                   </span>
                   <span className="text-muted-foreground ml-2">

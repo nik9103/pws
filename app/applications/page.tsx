@@ -188,6 +188,7 @@ export default function ApplicationsPage() {
             currentPage={currentPage}
             totalPages={totalPages || 1}
             pageSize={pageSize}
+            totalItems={filteredApplications.length}
             onPageChange={setCurrentPage}
             onPageSizeChange={(size) => {
               setPageSize(size)

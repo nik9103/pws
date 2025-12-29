@@ -156,6 +156,46 @@ const mockLoginHistory: LoginHistoryItem[] = [
     date: "1 дек. 2023",
     time: "12:30",
   },
+  {
+    id: "9",
+    device: "Windows PC",
+    deviceType: "desktop",
+    browser: "Firefox 121.0",
+    location: "Санкт-Петербург, Россия",
+    ip: "192.168.1.9",
+    date: "25 ноя. 2023",
+    time: "14:20",
+  },
+  {
+    id: "10",
+    device: "Samsung Galaxy",
+    deviceType: "mobile",
+    browser: "Chrome Mobile 118.0",
+    location: "Нижний Новгород, Россия",
+    ip: "192.168.1.10",
+    date: "18 ноя. 2023",
+    time: "09:30",
+  },
+  {
+    id: "11",
+    device: "MacBook Air",
+    deviceType: "desktop",
+    browser: "Safari 17.0",
+    location: "Ростов-на-Дону, Россия",
+    ip: "192.168.1.11",
+    date: "12 ноя. 2023",
+    time: "16:10",
+  },
+  {
+    id: "12",
+    device: "iPhone 15",
+    deviceType: "mobile",
+    browser: "Safari 17.1",
+    location: "Москва, Россия",
+    ip: "192.168.1.12",
+    date: "5 ноя. 2023",
+    time: "11:45",
+  },
 ]
 
 const getDeviceIcon = (type: "desktop" | "mobile" | "tablet") => {
@@ -635,14 +675,14 @@ export function MyProfile() {
     <div className="min-h-screen bg-background">
       <div className="max-w-[896px] mx-auto px-8">
         {/* Header Section - Sticky */}
-        <div className="sticky top-14 z-40 bg-white dark:bg-background" style={{ height: '90px' }}>
+        <div className="sticky top-14 z-40 bg-background" style={{ height: '90px' }}>
           <div className="flex items-center justify-between gap-4 h-full">
             <div className="flex-1">
               <div className="flex items-start justify-start gap-3">
                 <Button 
                   variant="outline" 
                   size="icon" 
-                  className="h-8 w-8 bg-white dark:bg-card"
+                  className="h-8 w-8 bg-background dark:bg-card"
                   onClick={() => router.back()}
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -1151,6 +1191,7 @@ export function MyProfile() {
                             currentPage={currentPage}
                             totalPages={totalPages}
                             pageSize={pageSize}
+                            totalItems={filteredHistory.length}
                             onPageChange={setCurrentPage}
                             onPageSizeChange={(size) => {
                               setPageSize(size)

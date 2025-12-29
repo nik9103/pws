@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { Command as CommandPrimitive } from 'cmdk'
-import { SearchIcon } from 'lucide-react'
+import { SearchIcon, XIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import {
@@ -21,7 +21,7 @@ function Command({
     <CommandPrimitive
       data-slot="command"
       className={cn(
-        'bg-popover text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-md',
+        'bg-background text-foreground flex h-full w-full flex-col overflow-hidden rounded-md',
         className,
       )}
       {...props}
@@ -34,7 +34,7 @@ function CommandDialog({
   description = 'Search for a command to run...',
   children,
   className,
-  showCloseButton = true,
+  showCloseButton = false,
   shouldFilter,
   ...props
 }: React.ComponentProps<typeof Dialog> & {
@@ -67,22 +67,43 @@ function CommandDialog({
 
 function CommandInput({
   className,
+  value,
+  onValueChange,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Input>) {
+  const handleClear = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    if (onValueChange) {
+      onValueChange('')
+    }
+  }
+
   return (
     <div
       data-slot="command-input-wrapper"
-      className="flex h-9 items-center gap-2 border-b px-3"
+      className="flex h-12 items-center gap-2 border-b border-border px-3 bg-background"
     >
       <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         data-slot="command-input"
+        value={value}
+        onValueChange={onValueChange}
         className={cn(
           'placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50',
           className,
         )}
         {...props}
       />
+      {value && (
+        <button
+          type="button"
+          onClick={handleClear}
+          aria-label="Очистить поиск"
+          className="p-1 hover:bg-accent rounded-md transition-colors text-muted-foreground hover:text-foreground flex-shrink-0"
+        >
+          <XIcon className="size-4" />
+        </button>
+      )}
     </div>
   )
 }
@@ -109,7 +130,7 @@ function CommandEmpty({
   return (
     <CommandPrimitive.Empty
       data-slot="command-empty"
-      className="py-6 text-center text-sm"
+      className="py-6 text-center text-sm text-muted-foreground"
       {...props}
     />
   )
@@ -152,7 +173,7 @@ function CommandItem({
     <CommandPrimitive.Item
       data-slot="command-item"
       className={cn(
-        "data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground dark:data-[selected=true]:bg-accent/30 [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}

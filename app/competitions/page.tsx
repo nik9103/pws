@@ -187,6 +187,7 @@ export default function CompetitionsPage() {
             currentPage={currentPage}
             totalPages={totalPages || 1}
             pageSize={pageSize}
+            totalItems={filteredCompetitions.length}
             onPageChange={setCurrentPage}
             onPageSizeChange={(size) => {
               setPageSize(size)

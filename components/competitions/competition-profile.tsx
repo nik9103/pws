@@ -38,6 +38,8 @@ import { cn } from "@/lib/utils"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { useToast } from "@/hooks/use-toast"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { AssignJudgesModal } from "./assign-judges-modal"
+import { mockAllJudges } from "@/lib/mock-judges"
 
 interface CompetitionProfileProps {
   competition: Competition
@@ -102,6 +104,7 @@ export function CompetitionProfile({ competition, onDelete, onEdit }: Competitio
   const [currentStatus, setCurrentStatus] = useState<"ongoing" | "completed" | "planned">(competition.status)
   const [statusChangeDialogOpen, setStatusChangeDialogOpen] = useState(false)
   const [selectedStatus, setSelectedStatus] = useState<"ongoing" | "completed" | "planned">(competition.status)
+  const [assignJudgesModalOpen, setAssignJudgesModalOpen] = useState(false)
 
   const participants = competition.participants || []
 
@@ -216,6 +219,37 @@ export function CompetitionProfile({ competition, onDelete, onEdit }: Competitio
   const handleStatusDialogClose = () => {
     setStatusChangeDialogOpen(false)
     setSelectedStatus(currentStatus)
+  }
+
+  const handleAssignJudges = (newJudges: CompetitionJudge[]) => {
+    const previousCount = judges.length
+    const newCount = newJudges.length
+    const addedCount = newCount - previousCount
+    
+    setJudges(newJudges)
+    
+    // Показываем toast уведомление
+    toast({
+      title: "Судьи назначены",
+      description: `Назначено судей: ${newCount}${addedCount > 0 ? ` (+${addedCount} новых)` : ''}`,
+      variant: "success",
+    })
+
+    // Отправляем уведомление в систему уведомлений
+    if (addedCount > 0 && typeof window !== "undefined") {
+      const notificationEvent = new CustomEvent("notification", {
+        detail: {
+          id: `judge-assigned-${Date.now()}`,
+          title: "Судьи назначены",
+          message: `На соревнование "${competition.name}" назначено ${addedCount} ${addedCount === 1 ? 'судья' : addedCount < 5 ? 'судьи' : 'судей'}`,
+          type: "success",
+          read: false,
+          createdAt: "только что",
+          href: `/competitions/${competition.id}`,
+        },
+      })
+      window.dispatchEvent(notificationEvent)
+    }
   }
 
   const getStatusLabel = (status: "ongoing" | "completed" | "planned"): string => {
@@ -438,11 +472,12 @@ export function CompetitionProfile({ competition, onDelete, onEdit }: Competitio
                     </TableBody>
                   </Table>
                   {participantsTotalPages > 1 && (
-                    <div className="px-6 border-t border-border">
+                    <div className="px-6 border-t border-border mb-6">
                       <Pagination
                         currentPage={participantsPage}
                         totalPages={participantsTotalPages}
                         pageSize={participantsPageSize}
+                        totalItems={sortedParticipants.length}
                         onPageChange={setParticipantsPage}
                         onPageSizeChange={(size) => {
                           setParticipantsPageSize(size)
@@ -470,7 +505,11 @@ export function CompetitionProfile({ competition, onDelete, onEdit }: Competitio
                   </div>
                   <h3 className="text-base font-semibold text-foreground">Судейский состав</h3>
                 </div>
-                <Button variant="outline" className="h-9 gap-2">
+                <Button 
+                  variant="outline" 
+                  className="h-9 gap-2"
+                  onClick={() => setAssignJudgesModalOpen(true)}
+                >
                   <UserRoundPlus className="h-4 w-4" />
                   Назначить судью
                 </Button>
@@ -527,6 +566,7 @@ export function CompetitionProfile({ competition, onDelete, onEdit }: Competitio
                         currentPage={judgesPage}
                         totalPages={judgesTotalPages}
                         pageSize={judgesPageSize}
+                        totalItems={judges.length}
                         onPageChange={setJudgesPage}
                         onPageSizeChange={(size) => {
                           setJudgesPageSize(size)
@@ -683,6 +723,15 @@ export function CompetitionProfile({ competition, onDelete, onEdit }: Competitio
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Assign Judges Modal */}
+      <AssignJudgesModal
+        open={assignJudgesModalOpen}
+        onOpenChange={setAssignJudgesModalOpen}
+        currentJudges={judges}
+        allJudges={mockAllJudges}
+        onAssign={handleAssignJudges}
+      />
     </div>
   )
 }

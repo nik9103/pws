@@ -241,6 +241,7 @@ export default function DocumentsPage() {
             currentPage={currentPage}
             totalPages={totalPages || 1}
             pageSize={pageSize}
+            totalItems={filteredDocuments.length}
             onPageChange={setCurrentPage}
             onPageSizeChange={(size) => {
               setPageSize(size)

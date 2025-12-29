@@ -17,6 +17,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SearchCommand } from "./search-command"
+import { NotificationsDropdown } from "./notifications-dropdown"
+import { mockNotifications } from "@/lib/mock-notifications"
+import type { Notification } from "@/types/notification"
 
 const navItems = [
   { label: "Главная", href: "/" },
@@ -31,6 +34,7 @@ export function Header() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("userAvatar") || "/stylized-user-avatar.png"
@@ -67,6 +71,24 @@ export function Header() {
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark")
+  }
+
+  const handleNotificationRead = (id: string) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+    )
+  }
+
+  const handleNotificationDelete = (id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id))
+  }
+
+  const handleMarkAllAsRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+  }
+
+  const handleClearAll = () => {
+    setNotifications([])
   }
 
   return (
@@ -127,10 +149,13 @@ export function Header() {
               <Moon className="h-4 w-4" />
             )}
           </Button>
-          <Button variant="ghost" size="icon" className="h-9 w-9 relative">
-            <Bell className="h-4 w-4" />
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-orange-500" />
-          </Button>
+          <NotificationsDropdown
+            notifications={notifications}
+            onNotificationRead={handleNotificationRead}
+            onNotificationDelete={handleNotificationDelete}
+            onMarkAllAsRead={handleMarkAllAsRead}
+            onClearAll={handleClearAll}
+          />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="ml-2 rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
